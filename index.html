@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simple Landing Page</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+body{
+    background:#f4f6f9;
+    color:#333;
+}
+
+/* Navbar */
+
+header{
+    background:#fff;
+    box-shadow:0 2px 10px rgba(0,0,0,.08);
+    position:sticky;
+    top:0;
+}
+
+.navbar{
+    max-width:1100px;
+    margin:auto;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:18px 20px;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+    color:#2563eb;
+}
+
+.nav-links{
+    list-style:none;
+    display:flex;
+    gap:25px;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:#333;
+    transition:.3s;
+}
+
+.nav-links a:hover{
+    color:#2563eb;
+}
+
+.btn{
+    text-decoration:none;
+    background:#2563eb;
+    color:#fff;
+    padding:10px 20px;
+    border-radius:6px;
+    transition:.3s;
+}
+
+.btn:hover{
+    background:#1d4ed8;
+}
+
+/* Hero */
+
+.hero{
+    min-height:90vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    background:linear-gradient(135deg,#2563eb,#4f46e5);
+    color:#fff;
+    padding:20px;
+}
+
+.hero-content{
+    max-width:700px;
+}
+
+.hero h1{
+    font-size:55px;
+    margin-bottom:20px;
+}
+
+.hero p{
+    font-size:20px;
+    line-height:1.6;
+    margin-bottom:35px;
+}
+
+.hero-btn{
+    display:inline-block;
+    text-decoration:none;
+    background:#fff;
+    color:#2563eb;
+    padding:15px 35px;
+    border-radius:8px;
+    font-weight:bold;
+    transition:.3s;
+}
+
+.hero-btn:hover{
+    transform:translateY(-3px);
+    background:#f1f5f9;
+}
+
+/* Features */
+
+.features{
+    padding:80px 20px;
+    max-width:1100px;
+    margin:auto;
+    text-align:center;
+}
+
+.features h2{
+    font-size:38px;
+    margin-bottom:50px;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.card{
+    background:#fff;
+    padding:35px;
+    border-radius:12px;
+    box-shadow:0 5px 15px rgba(0,0,0,.08);
+    transition:.3s;
+}
+
+.card:hover{
+    transform:translateY(-8px);
+}
+
+.card h3{
+    color:#2563eb;
+    margin-bottom:15px;
+}
+
+/* Footer */
+
+footer{
+    background:#111827;
+    color:#fff;
+    text-align:center;
+    padding:20px;
+}
+
+/* Responsive */
+
+@media(max-width:768px){
+
+.navbar{
+    flex-direction:column;
+    gap:15px;
+}
+
+.nav-links{
+    flex-direction:column;
+    text-align:center;
+}
+
+.hero h1{
+    font-size:40px;
+}
+
+.hero p{
+    font-size:18px;
+}
+
+}
+</style>
+
+</head>
+<body>
+
+<header>
+    <nav class="navbar">
+        <div class="logo">MyWebsite</div>
+
+        <ul class="nav-links">
+            <li><a href="#">Home</a></li>
+            <li><a href="#">Features</a></li>
+            <li><a href="#">About</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+
+        <a href="#" class="btn">Get Started</a>
+    </nav>
+</header>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Build Your Dream Website</h1>
+
+        <p>
+            Create beautiful, responsive, and modern websites using only
+            HTML and CSS. Fast, clean, and easy to customize.
+        </p>
+
+        <a href="#" class="hero-btn">Explore Now</a>
+    </div>
+</section>
+
+<section class="features">
+    <h2>Our Features</h2>
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>⚡ Fast</h3>
+            <p>Optimized for high performance and quick loading.</p>
+        </div>
+
+        <div class="card">
+            <h3>📱 Responsive</h3>
+            <p>Works perfectly on desktop, tablet, and mobile devices.</p>
+        </div>
+
+        <div class="card">
+            <h3>🎨 Modern Design</h3>
+            <p>Simple, elegant interface with smooth hover effects.</p>
+        </div>
+
+    </div>
+</section>
+
+<footer>
+    <p>&copy; 2026 MyWebsite. All Rights Reserved.</p>
+</footer>
+
+</body>
+</html>
