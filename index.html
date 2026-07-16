@@ -22,126 +22,111 @@
   <style>
     body { font-family: 'Roboto', sans-serif; }
     
+    /* Elegant thin scrollbar for bento cards */
     ::-webkit-scrollbar { width: 6px; height: 6px; }
     ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(148, 163, 184, 0.3); border-radius: 10px; }
-    ::-webkit-scrollbar-thumb:hover { background: rgba(148, 163, 184, 0.6); }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
 
-    @keyframes blob {
-      0% { transform: translate(0px, 0px) scale(1); }
-      33% { transform: translate(30px, -50px) scale(1.1); }
-      66% { transform: translate(-20px, 20px) scale(0.9); }
-      100% { transform: translate(0px, 0px) scale(1); }
-    }
-    .animate-blob { animation: blob 7s infinite; }
-    .animation-delay-2000 { animation-delay: 2s; }
-    .animation-delay-4000 { animation-delay: 4s; }
+    /* Hide scrollbar for horizontal tabs on mobile */
+    .hide-scrollbar::-webkit-scrollbar { display: none; }
+    .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="flex flex-col h-screen bg-[#f3f6f9] text-gray-800 relative overflow-hidden selection:bg-blue-200">
+<body class="bg-[#F0F4F8] text-slate-800 h-screen flex flex-col font-['Roboto'] selection:bg-blue-200">
 
-  <!-- Ambient Animated Blobs -->
-  <div class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-blue-300/40 rounded-full mix-blend-multiply filter blur-[80px] animate-blob z-0 pointer-events-none print:hidden"></div>
-  <div class="absolute top-[20%] right-[-10%] w-96 h-96 bg-purple-300/40 rounded-full mix-blend-multiply filter blur-[80px] animate-blob animation-delay-2000 z-0 pointer-events-none print:hidden"></div>
-  <div class="absolute bottom-[-20%] left-[20%] w-96 h-96 bg-cyan-300/40 rounded-full mix-blend-multiply filter blur-[80px] animate-blob animation-delay-4000 z-0 pointer-events-none print:hidden"></div>
-
-  <!-- App Wrapper -->
-  <div class="relative z-10 flex flex-col h-full w-full">
+  <!-- Main Bento Grid Wrapper -->
+  <div class="flex-1 flex flex-col lg:flex-row gap-4 p-4 lg:p-6 lg:overflow-hidden max-w-[1600px] mx-auto w-full h-full overflow-y-auto">
     
-    <!-- Top Navbar -->
-    <header class="h-16 flex items-center justify-between px-6 bg-white/60 backdrop-blur-xl border-b border-white/50 shadow-sm shrink-0 print:hidden transition-all">
-      <div class="flex items-center space-x-3">
-        <div class="bg-gradient-to-br from-blue-500 to-indigo-600 p-2 rounded-xl shadow-md shadow-blue-500/20">
-          <i data-lucide="calendar-days" class="w-5 h-5 text-white"></i>
+    <!-- Left Column (Bento Cards) -->
+    <div class="w-full lg:w-[400px] flex flex-col gap-4 shrink-0 lg:overflow-hidden h-fit lg:h-full print:hidden">
+      
+      <!-- Header Card -->
+      <div class="bg-white rounded-[28px] p-5 flex items-center justify-between shrink-0 shadow-sm border border-slate-100">
+        <div class="flex items-center space-x-3">
+          <div class="bg-blue-600 p-2.5 rounded-[16px] shadow-sm">
+            <i data-lucide="calendar-days" class="w-5 h-5 text-white"></i>
+          </div>
+          <h1 class="text-xl font-medium text-slate-800 tracking-tight">Proxy<span class="font-bold text-blue-600">Manager</span></h1>
         </div>
-        <h1 class="text-xl font-medium text-gray-800 tracking-tight">Proxy<span class="font-bold text-blue-600">Manager</span></h1>
+        <button id="sync-btn" onclick="fetchData()" class="flex items-center justify-center p-2.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-full transition-colors" title="Sync Data">
+          <i data-lucide="refresh-cw" id="sync-icon" class="w-5 h-5"></i>
+        </button>
       </div>
-      <button id="sync-btn" onclick="fetchData()" class="flex items-center space-x-2 px-5 py-2.5 bg-white/50 hover:bg-white/80 backdrop-blur-md border border-white/60 shadow-[0_2px_10px_rgba(0,0,0,0.02)] text-gray-700 rounded-full transition-all text-sm font-medium hover:shadow-[0_4px_15px_rgba(0,0,0,0.05)]">
-        <i data-lucide="refresh-cw" id="sync-icon" class="w-4 h-4 text-blue-600"></i>
-        <span id="sync-text">Sync Sheets Data</span>
-      </button>
-    </header>
 
-    <div class="flex flex-1 overflow-hidden">
-      <!-- Left Sidebar -->
-      <aside class="w-80 bg-white/40 backdrop-blur-lg border-r border-white/60 flex flex-col shrink-0 print:hidden shadow-[4px_0_24px_rgba(0,0,0,0.01)]">
-        
-        <!-- Day Selector -->
-        <div class="p-5 border-b border-white/50">
-          <h2 class="text-xs font-bold text-gray-400/80 uppercase tracking-widest mb-3 pl-1">Working Day</h2>
-          <div id="day-selector-container" class="flex flex-wrap gap-2"></div>
+      <!-- Day Selector Card -->
+      <div class="bg-white rounded-[28px] p-6 shrink-0 shadow-sm border border-slate-100">
+        <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 pl-1">Working Day</h2>
+        <div id="day-selector-container" class="flex overflow-x-auto hide-scrollbar gap-2 pb-1"></div>
+      </div>
+
+      <!-- Absences Card -->
+      <div class="bg-white rounded-[28px] p-6 flex flex-col flex-1 min-h-[450px] lg:overflow-hidden shadow-sm border border-slate-100">
+        <div class="flex items-center justify-between mb-5 pl-1 shrink-0">
+          <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider">Mark Absences</h2>
+          <span id="absent-badge" class="bg-red-100 text-red-700 py-1 px-3 rounded-full text-xs font-bold">0 Absent</span>
         </div>
-
+        
+        <!-- Search Bar -->
+        <div class="relative mb-5 shrink-0">
+          <input type="text" id="teacher-search" placeholder="Search teachers..." oninput="handleSearch(event)" class="w-full bg-slate-100 border-transparent text-slate-700 text-base rounded-full focus:ring-2 focus:ring-blue-500 focus:bg-white block px-5 py-3.5 transition-all placeholder-slate-400 outline-none">
+          <i data-lucide="search" class="absolute right-4 top-3.5 w-5 h-5 text-slate-400"></i>
+        </div>
+        
         <!-- Teacher List -->
-        <div class="flex-1 overflow-y-auto flex flex-col">
-          <div class="p-5 pb-2">
-            <div class="flex items-center justify-between mb-4 pl-1">
-              <h2 class="text-xs font-bold text-gray-400/80 uppercase tracking-widest">Mark Absences</h2>
-              <span id="absent-badge" class="bg-blue-100/80 backdrop-blur-sm text-blue-700 py-1 px-3 rounded-full text-xs font-bold shadow-sm">0 Absent</span>
-            </div>
-            
-            <!-- Search Bar added here -->
-            <div class="relative mb-4">
-              <input type="text" id="teacher-search" placeholder="Search teachers..." oninput="handleSearch(event)" class="w-full bg-white/50 border border-white/60 text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 block px-4 py-2.5 shadow-sm outline-none transition-all placeholder-gray-400">
-              <i data-lucide="search" class="absolute right-3 top-2.5 w-4 h-4 text-gray-400"></i>
-            </div>
-          </div>
-          
-          <div id="teacher-list-container" class="space-y-2 px-5 pb-5"></div>
-        </div>
-      </aside>
-
-      <!-- Main Content Area -->
-      <main class="flex-1 flex flex-col bg-transparent relative overflow-hidden print:bg-white">
-        
-        <!-- Tabs -->
-        <div class="px-10 pt-8 border-b border-gray-200/50 print:hidden shrink-0">
-          <div id="tabs-container" class="flex space-x-8"></div>
-        </div>
-
-        <!-- Scrollable Content -->
-        <div class="flex-1 overflow-y-auto p-10 print:p-0 relative">
-          <div class="max-w-6xl mx-auto print:max-w-none">
-            
-            <!-- Loading State -->
-            <div id="loading-state" class="hidden text-center py-20">
-              <i data-lucide="loader-2" class="w-10 h-10 text-blue-500 animate-spin mx-auto mb-4"></i>
-              <h3 class="text-lg font-medium text-gray-700">Loading live data from Google Sheets...</h3>
-            </div>
-
-            <div id="content-wrapper">
-              <!-- Header -->
-              <div class="flex justify-between items-end mb-10 print:mb-4">
-                <div>
-                  <h2 id="view-title" class="text-3xl font-light text-gray-900 tracking-tight">Proxy Assignments</h2>
-                  <p class="text-gray-500 flex items-center mt-2 font-medium">
-                    <i data-lucide="calendar" class="w-4 h-4 mr-2 text-blue-500"></i>
-                    <span id="view-subtitle">Schedule</span>
-                  </p>
-                </div>
-                <div class="flex space-x-3 print:hidden">
-                  <button id="copy-btn" onclick="copyMessage()" class="hidden items-center space-x-2 bg-gradient-to-br from-green-500 to-emerald-600 text-white px-5 py-2.5 rounded-full hover:shadow-lg transition-all shadow-sm hover:scale-105 border border-green-400/50">
-                    <i data-lucide="copy" class="w-4 h-4"></i>
-                    <span class="font-medium text-sm">Copy Message</span>
-                  </button>
-                  <button id="print-btn" onclick="window.print()" class="hidden items-center space-x-2 bg-white/70 backdrop-blur-md border border-white/60 text-gray-700 px-5 py-2.5 rounded-full hover:bg-white transition-all shadow-sm hover:shadow-md">
-                    <i data-lucide="printer" class="w-4 h-4 text-gray-500"></i>
-                    <span class="font-medium text-sm">Print Plan</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Dynamic Content Container -->
-              <div id="main-content-container"></div>
-            </div>
-          </div>
-        </div>
-      </main>
+        <div id="teacher-list-container" class="space-y-2 overflow-y-auto flex-1 hide-scrollbar -mx-2 px-2 pb-4"></div>
+      </div>
     </div>
+
+    <!-- Right Column (Main Content Card) -->
+    <main class="flex-1 flex flex-col bg-white rounded-[28px] lg:overflow-hidden shadow-sm border border-slate-100 h-full min-h-[600px] print:shadow-none print:border-none print:rounded-none">
+      
+      <!-- Tabs Header -->
+      <div class="px-6 md:px-8 pt-6 border-b border-slate-100 print:hidden shrink-0 overflow-x-auto hide-scrollbar">
+        <div id="tabs-container" class="flex space-x-6 min-w-max"></div>
+      </div>
+
+      <!-- Scrollable Workspace -->
+      <div class="flex-1 overflow-y-auto p-6 md:p-8 print:p-0 relative bg-slate-50/30">
+        
+        <!-- Loading State -->
+        <div id="loading-state" class="hidden text-center py-24">
+          <i data-lucide="loader-2" class="w-12 h-12 text-blue-600 animate-spin mx-auto mb-4"></i>
+          <h3 class="text-xl font-medium text-slate-700">Loading live data...</h3>
+          <p class="text-slate-500 mt-2">Fetching from Google Sheets</p>
+        </div>
+
+        <div id="content-wrapper">
+          <!-- View Header -->
+          <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 sm:gap-0 mb-8 print:mb-4">
+            <div>
+              <h2 id="view-title" class="text-2xl md:text-3xl font-medium text-slate-800 tracking-tight">Proxy Assignments</h2>
+              <p class="text-slate-500 flex items-center mt-1.5 font-medium text-sm">
+                <i data-lucide="calendar" class="w-4 h-4 mr-2 text-blue-600"></i>
+                <span id="view-subtitle">Schedule</span>
+              </p>
+            </div>
+            <div class="flex space-x-3 print:hidden w-full sm:w-auto">
+              <button id="copy-btn" onclick="copyMessage()" class="hidden flex-1 sm:flex-none items-center justify-center space-x-2 bg-blue-600 text-white px-5 py-2.5 rounded-full hover:bg-blue-700 transition-colors shadow-sm font-medium text-sm">
+                <i data-lucide="copy" class="w-4 h-4"></i>
+                <span>Copy Message</span>
+              </button>
+              <button id="print-btn" onclick="window.print()" class="hidden flex-1 sm:flex-none items-center justify-center space-x-2 bg-slate-100 text-slate-700 px-5 py-2.5 rounded-full hover:bg-slate-200 transition-colors font-medium text-sm">
+                <i data-lucide="printer" class="w-4 h-4"></i>
+                <span>Print</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Content Container -->
+          <div id="main-content-container"></div>
+        </div>
+      </div>
+    </main>
   </div>
 
   <!-- Toast Notification -->
-  <div id="toast" class="fixed bottom-6 right-6 bg-gray-900/90 backdrop-blur-xl border border-gray-700/50 text-white px-6 py-3.5 rounded-2xl shadow-2xl transform translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center space-x-3 pointer-events-none">
+  <div id="toast" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-slate-800 text-white px-6 py-3.5 rounded-full shadow-lg translate-y-20 opacity-0 transition-all duration-300 z-50 flex items-center space-x-3 pointer-events-none">
     <i data-lucide="check-circle-2" class="w-5 h-5 text-green-400"></i>
     <span id="toast-message" class="font-medium text-sm"></span>
   </div>
@@ -172,9 +157,7 @@
       state.isSyncing = true;
       
       const icon = document.getElementById('sync-icon');
-      const text = document.getElementById('sync-text');
       icon.classList.add('animate-spin');
-      text.innerText = 'Syncing...';
       
       document.getElementById('loading-state').classList.remove('hidden');
       document.getElementById('content-wrapper').classList.add('hidden');
@@ -243,7 +226,6 @@
           // Finish Loading
           state.isSyncing = false;
           icon.classList.remove('animate-spin');
-          text.innerText = 'Sync Sheets Data';
           document.getElementById('loading-state').classList.add('hidden');
           document.getElementById('content-wrapper').classList.remove('hidden');
           
@@ -254,7 +236,6 @@
           alert("Failed to connect to Google Sheets. Check if the link is published to the web.");
           state.isSyncing = false;
           icon.classList.remove('animate-spin');
-          text.innerText = 'Sync Sheets Data';
         }
       });
     }
@@ -367,6 +348,7 @@
     }
 
     // --- EVENT HANDLERS ---
+    
     window.handleSearch = function(e) {
       state.searchQuery = e.target.value.toLowerCase();
       renderSidebar();
@@ -421,45 +403,53 @@
 
     // --- RENDER FUNCTIONS ---
     function renderSidebar() {
-      // 1. Day Selector
+      // 1. Day Selector (Material segmented buttons/pills)
       const dayContainer = document.getElementById('day-selector-container');
       dayContainer.innerHTML = DAYS.map(day => `
-        <button onclick="setSelectedDay('${day}')" class="px-4 py-2 rounded-full text-xs sm:text-sm font-medium transition-all duration-200 ${
+        <button onclick="setSelectedDay('${day}')" class="px-5 py-2.5 rounded-full text-sm font-medium transition-all whitespace-nowrap ${
           state.selectedDay === day 
-          ? 'bg-blue-600 text-white shadow-md shadow-blue-500/30 transform scale-105' 
-          : 'bg-white/50 text-gray-600 border border-white/60 hover:bg-white/80 hover:shadow-sm'
+          ? 'bg-blue-100 text-blue-800' 
+          : 'bg-transparent text-slate-600 hover:bg-slate-100'
         }">${day.slice(0, 3)}</button>
       `).join('');
 
-      // 2. Teacher List with Search Filter
+      // 2. Teacher List (Material list items)
       document.getElementById('absent-badge').innerText = `${state.absentTeachers.length} Absent`;
       
       const teacherContainer = document.getElementById('teacher-list-container');
-      
       const filteredTeachers = TEACHERS.filter(t => 
         t.name.toLowerCase().includes(state.searchQuery) || 
         t.subject.toLowerCase().includes(state.searchQuery)
       );
 
       if (filteredTeachers.length === 0 && TEACHERS.length > 0) {
-        teacherContainer.innerHTML = `<p class="text-gray-500 text-sm text-center py-4">No teachers found.</p>`;
+        teacherContainer.innerHTML = `<p class="text-slate-400 text-sm text-center py-6">No teachers found.</p>`;
       } else {
         teacherContainer.innerHTML = filteredTeachers.map(teacher => {
           const isAbsent = state.absentTeachers.includes(teacher.id);
+          const initials = teacher.name.split(' ').map(n => n[0]).join('').substring(0, 2);
+          
           return `
-            <button onclick="toggleAbsent('${teacher.id}')" class="w-full flex items-center justify-between p-3.5 rounded-2xl border transition-all duration-200 text-left ${
+            <button onclick="toggleAbsent('${teacher.id}')" class="w-full flex items-center justify-between p-3 rounded-[20px] transition-all duration-200 text-left ${
               isAbsent 
-              ? 'bg-red-50/80 backdrop-blur-md border-red-200/60 shadow-[0_4px_12px_rgba(239,68,68,0.08)] transform scale-[1.02]' 
-              : 'bg-white/30 border-transparent hover:border-white/60 hover:bg-white/60 hover:shadow-sm'
+              ? 'bg-red-50 hover:bg-red-100' 
+              : 'bg-transparent hover:bg-slate-100'
             }">
-              <div class="flex flex-col">
-                <span class="font-medium text-sm ${isAbsent ? 'text-red-700' : 'text-gray-700'}">${teacher.name}</span>
-                <span class="text-xs ${isAbsent ? 'text-red-400' : 'text-gray-500'} mt-0.5 truncate max-w-[180px]">${teacher.subject}</span>
+              <div class="flex items-center space-x-4">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${isAbsent ? 'bg-red-200 text-red-700' : 'bg-slate-200 text-slate-600'}">
+                  ${initials}
+                </div>
+                <div class="flex flex-col overflow-hidden">
+                  <span class="font-medium text-sm truncate ${isAbsent ? 'text-red-800' : 'text-slate-800'}">${teacher.name}</span>
+                  <span class="text-xs truncate ${isAbsent ? 'text-red-500' : 'text-slate-500'} mt-0.5">${teacher.subject}</span>
+                </div>
               </div>
-              ${isAbsent 
-                ? `<i data-lucide="user-minus" class="w-5 h-5 text-red-500 shrink-0"></i>` 
-                : `<div class="w-5 h-5 rounded-full border-2 border-gray-300/50 bg-white/50 shrink-0"></div>`
-              }
+              <div class="w-6 h-6 shrink-0 flex items-center justify-center">
+                ${isAbsent 
+                  ? `<i data-lucide="check" class="w-5 h-5 text-red-600"></i>` 
+                  : `<div class="w-5 h-5 rounded-full border-2 border-slate-300"></div>`
+                }
+              </div>
             </button>
           `;
         }).join('');
@@ -471,23 +461,24 @@
       const summaryData = generateSummaryData();
       const pendingCount = summaryData.filter(d => d.status === 'Pending').length;
       
+      // Material underline tabs
       const tabsContainer = document.getElementById('tabs-container');
       tabsContainer.innerHTML = `
-        <button onclick="setActiveTab('assign')" class="pb-3 flex items-center space-x-2 border-b-2 font-medium transition-all duration-200 ${
-          state.activeTab === 'assign' ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-800'
+        <button onclick="setActiveTab('assign')" class="pb-4 px-2 flex items-center space-x-2 border-b-2 font-medium transition-colors text-sm ${
+          state.activeTab === 'assign' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-t-lg'
         }">
           <i data-lucide="layout-dashboard" class="w-4 h-4 ${state.activeTab === 'assign' ? 'text-blue-600' : ''}"></i>
           <span>Assign Proxies</span>
         </button>
-        <button onclick="setActiveTab('summary')" class="pb-3 flex items-center space-x-2 border-b-2 font-medium transition-all duration-200 relative ${
-          state.activeTab === 'summary' ? 'border-blue-600 text-blue-700' : 'border-transparent text-gray-500 hover:text-gray-800'
+        <button onclick="setActiveTab('summary')" class="pb-4 px-2 flex items-center space-x-2 border-b-2 font-medium transition-colors text-sm relative ${
+          state.activeTab === 'summary' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-t-lg'
         }">
           <i data-lucide="clipboard-list" class="w-4 h-4 ${state.activeTab === 'summary' ? 'text-blue-600' : ''}"></i>
           <span>Daily Summary</span>
           ${pendingCount > 0 ? `
-            <span class="flex h-2.5 w-2.5 relative ml-1 -mt-3">
+            <span class="flex h-2 w-2 relative ml-1 -mt-2">
               <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-              <span class="relative inline-flex rounded-full h-2.5 w-2.5 bg-red-500 border border-white"></span>
+              <span class="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
             </span>
           ` : ''}
         </button>
@@ -518,10 +509,10 @@
       
       if (TEACHERS.length === 0) {
         container.innerHTML = `
-          <div class="text-center py-24 bg-white/40 backdrop-blur-xl rounded-3xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
-             <i data-lucide="database" class="w-12 h-12 text-gray-400 mx-auto mb-4"></i>
-             <h3 class="text-xl font-medium text-gray-800">No Data Loaded</h3>
-             <p class="text-gray-500 mt-2">Click 'Sync Sheets Data' above to load your teachers.</p>
+          <div class="text-center py-24 bg-white rounded-[24px] border border-slate-100 shadow-sm">
+             <i data-lucide="database" class="w-12 h-12 text-slate-300 mx-auto mb-4"></i>
+             <h3 class="text-lg font-medium text-slate-700">No Data Loaded</h3>
+             <p class="text-slate-500 mt-2 text-sm">Click 'Sync Data' to load teachers from Google Sheets.</p>
           </div>
         `;
         return;
@@ -530,35 +521,37 @@
       if (state.activeTab === 'assign') {
         if (state.absentTeachers.length === 0) {
           container.innerHTML = `
-            <div class="text-center py-24 bg-white/40 backdrop-blur-xl rounded-3xl border border-white/60 shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
-              <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-50/80 mb-5 shadow-inner">
-                <i data-lucide="users" class="w-10 h-10 text-blue-500"></i>
+            <div class="text-center py-24 bg-white rounded-[28px] border border-slate-100 shadow-sm">
+              <div class="inline-flex items-center justify-center w-20 h-20 rounded-full bg-blue-50 mb-5">
+                <i data-lucide="user-check" class="w-10 h-10 text-blue-600"></i>
               </div>
-              <h3 class="text-xl font-medium text-gray-800">No Absences Marked</h3>
-              <p class="text-gray-500 max-w-sm mx-auto mt-3 leading-relaxed">Select teachers from the left sidebar to mark them as absent and begin assigning proxies.</p>
+              <h3 class="text-xl font-medium text-slate-800">All Teachers Present</h3>
+              <p class="text-slate-500 max-w-sm mx-auto mt-3 text-sm leading-relaxed">Select teachers from the "Mark Absences" list to begin assigning proxies.</p>
             </div>
           `;
         } else {
-          let html = `<div class="grid grid-cols-1 xl:grid-cols-2 gap-8">`;
+          let html = `<div class="grid grid-cols-1 xl:grid-cols-2 gap-6">`;
           
           state.absentTeachers.forEach(absentId => {
             const teacher = TEACHERS.find(t => t.id === absentId);
             const schedule = TIMETABLE[absentId][state.selectedDay] || [null,null,null,null,null,null,null];
+            const initials = teacher.name.split(' ').map(n => n[0]).join('').substring(0, 2);
             
+            // Material Card for Assignments
             html += `
-              <div class="bg-white/60 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.04)] border border-white/70 overflow-hidden transition-all duration-300 hover:shadow-[0_8px_30px_rgb(0,0,0,0.08)]">
-                <div class="px-6 py-5 border-b border-white/50 bg-white/40 flex items-center justify-between">
+              <div class="bg-white rounded-[24px] shadow-sm border border-slate-200 overflow-hidden">
+                <div class="px-6 py-5 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
                   <div class="flex items-center space-x-4">
-                    <div class="bg-red-500/10 text-red-500 p-2.5 rounded-xl">
-                      <i data-lucide="alert-circle" class="w-5 h-5"></i>
+                    <div class="w-12 h-12 rounded-full bg-red-100 text-red-600 flex items-center justify-center font-bold text-lg shrink-0">
+                      ${initials}
                     </div>
                     <div class="overflow-hidden">
-                      <h3 class="font-medium text-lg text-gray-800 truncate">${teacher.name}</h3>
-                      <p class="text-sm text-gray-500 truncate max-w-[200px]">${teacher.subject}</p>
+                      <h3 class="font-medium text-base text-slate-800 truncate">${teacher.name}</h3>
+                      <p class="text-sm text-slate-500 truncate max-w-[200px]">${teacher.subject}</p>
                     </div>
                   </div>
                 </div>
-                <div class="divide-y divide-gray-100/50 p-2">
+                <div class="p-2 space-y-1">
             `;
 
             schedule.forEach((className, index) => {
@@ -568,19 +561,19 @@
               const availableProxies = isFree ? [] : getAvailableProxies(state.selectedDay, index, absentId);
 
               html += `
-                <div class="px-4 py-3.5 flex items-center justify-between hover:bg-white/40 rounded-xl transition-colors">
-                  <div class="flex items-center space-x-4 w-1/3">
-                    <span class="flex items-center justify-center w-9 h-9 rounded-xl bg-gray-100/80 text-gray-600 font-medium text-sm shadow-inner shrink-0">P${index + 1}</span>
+                <div class="px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between rounded-[16px] hover:bg-slate-50 transition-colors gap-3 sm:gap-0">
+                  <div class="flex items-center space-x-4 w-full sm:w-1/3">
+                    <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold text-xs shrink-0">P${index + 1}</span>
                     ${isFree 
-                      ? `<span class="text-sm text-gray-400 italic flex items-center whitespace-nowrap"><i data-lucide="coffee" class="w-4 h-4 mr-2 opacity-60"></i> Free</span>` 
-                      : `<span class="font-medium text-gray-800 bg-blue-50/50 border border-blue-100/50 px-3.5 py-1.5 rounded-lg text-sm truncate max-w-[120px]" title="${className}">Class ${className}</span>`
+                      ? `<span class="text-sm text-slate-400 italic flex items-center"><i data-lucide="minus" class="w-4 h-4 mr-2"></i> Free</span>` 
+                      : `<span class="font-medium text-slate-800 bg-blue-50 px-3 py-1.5 rounded-lg text-sm truncate w-full sm:w-auto" title="${className}">${className}</span>`
                     }
                   </div>
                   
-                  <div class="flex-1 flex justify-end">
-                    ${isFree ? `<span class="text-sm text-gray-400">No proxy needed</span>` : `
-                      <div class="relative w-full max-w-[220px]">
-                        <select onchange="assignProxy(this, '${absentId}', ${index})" class="w-full appearance-none bg-white/70 backdrop-blur-sm border ${currentProxyId ? 'border-green-300 ring-2 ring-green-100' : 'border-white/80'} text-gray-700 text-sm rounded-xl focus:ring-2 focus:ring-blue-400 focus:border-blue-400 block px-4 py-2.5 shadow-sm cursor-pointer outline-none transition-all hover:bg-white">
+                  <div class="flex-1 w-full sm:w-auto flex justify-start sm:justify-end">
+                    ${isFree ? `<span class="text-sm text-slate-400 hidden sm:block px-3">No proxy needed</span>` : `
+                      <div class="relative w-full sm:max-w-[240px]">
+                        <select onchange="assignProxy(this, '${absentId}', ${index})" class="w-full appearance-none bg-slate-100 border-none text-slate-700 text-sm font-medium rounded-full focus:ring-2 focus:ring-blue-500 focus:bg-white block px-4 py-3 pr-10 cursor-pointer outline-none transition-all hover:bg-slate-200">
                           <option value="">Select proxy...</option>
                           ${availableProxies.map(proxy => `
                             <option value="${proxy.id}" ${proxy.id === currentProxyId ? 'selected' : ''}>
@@ -591,15 +584,15 @@
                             <option value="${currentProxyId}" selected>${TEACHERS.find(t=>t.id===currentProxyId).name} (Selected)</option>
                           ` : ''}
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-gray-400">
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
                           <i data-lucide="chevron-down" class="w-4 h-4"></i>
                         </div>
                       </div>
                     `}
                   </div>
 
-                  <div class="w-10 flex justify-end">
-                    ${currentProxyId && !isFree ? `<i data-lucide="check-circle-2" class="w-5 h-5 text-green-500 drop-shadow-sm"></i>` : ''}
+                  <div class="hidden sm:flex w-8 justify-end">
+                    ${currentProxyId && !isFree ? `<i data-lucide="check-circle-2" class="w-5 h-5 text-green-600"></i>` : ''}
                   </div>
                 </div>
               `;
@@ -616,53 +609,53 @@
         
         if (summaryData.length === 0) {
           container.innerHTML = `
-            <div class="bg-white/40 backdrop-blur-xl rounded-3xl border border-white/60 shadow-sm print:border-none print:shadow-none p-16 text-center text-gray-500 text-lg">
+            <div class="bg-white rounded-[24px] border border-slate-100 shadow-sm p-16 text-center text-slate-500 text-lg">
               No classes require coverage for ${state.selectedDay}.
             </div>
           `;
         } else {
           let html = `
-            <div class="bg-white/70 backdrop-blur-xl rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.03)] border border-white/60 overflow-hidden print:border-none print:shadow-none">
+            <div class="bg-white rounded-[24px] shadow-sm border border-slate-200 overflow-hidden print:border-none print:shadow-none">
               <div class="overflow-x-auto">
-                <table class="w-full text-sm text-left text-gray-600">
-                  <thead class="text-xs text-gray-500/80 uppercase tracking-wider bg-white/40 border-b border-white/60 print:bg-white print:text-gray-800">
+                <table class="w-full text-sm text-left text-slate-600">
+                  <thead class="text-xs text-slate-500 uppercase tracking-wider bg-slate-50 border-b border-slate-200 print:bg-white print:text-slate-800">
                     <tr>
-                      <th class="px-8 py-5 font-medium">Period</th>
-                      <th class="px-8 py-5 font-medium">Class</th>
-                      <th class="px-8 py-5 font-medium">Absent Teacher</th>
-                      <th class="px-8 py-5 font-medium">Assigned Proxy</th>
-                      <th class="px-8 py-5 font-medium text-right">Status</th>
+                      <th class="px-6 py-5 font-medium whitespace-nowrap">Period</th>
+                      <th class="px-6 py-5 font-medium whitespace-nowrap">Class</th>
+                      <th class="px-6 py-5 font-medium min-w-[180px]">Absent Teacher</th>
+                      <th class="px-6 py-5 font-medium min-w-[180px]">Assigned Proxy</th>
+                      <th class="px-6 py-5 font-medium text-right whitespace-nowrap">Status</th>
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-gray-100/50">
+                  <tbody class="divide-y divide-slate-100">
           `;
 
           summaryData.forEach(row => {
             html += `
-              <tr class="hover:bg-white/50 transition-colors print:border-b print:border-gray-300 print:hover:bg-white print:break-inside-avoid">
-                <td class="px-8 py-5 font-medium text-gray-800">Period ${row.period}</td>
-                <td class="px-8 py-5"><span class="bg-gray-100/80 text-gray-700 px-3 py-1.5 rounded-lg font-medium shadow-inner print:bg-transparent print:px-0 print:text-black">${row.className}</span></td>
-                <td class="px-8 py-5">
+              <tr class="hover:bg-slate-50 transition-colors print:border-b print:border-slate-300 print:hover:bg-white print:break-inside-avoid">
+                <td class="px-6 py-4 font-medium text-slate-800 whitespace-nowrap">Period ${row.period}</td>
+                <td class="px-6 py-4 whitespace-nowrap"><span class="bg-slate-100 text-slate-800 px-3 py-1.5 rounded-lg font-medium print:bg-transparent print:px-0 print:text-black">${row.className}</span></td>
+                <td class="px-6 py-4">
                   <div class="flex flex-col">
-                    <span class="font-medium text-gray-800">${row.absentTeacher.name}</span>
-                    <span class="text-xs text-gray-500 mt-0.5 truncate max-w-[200px]">${row.absentTeacher.subject}</span>
+                    <span class="font-medium text-slate-800">${row.absentTeacher.name}</span>
+                    <span class="text-xs text-slate-500 mt-0.5 truncate max-w-[180px]">${row.absentTeacher.subject}</span>
                   </div>
                 </td>
-                <td class="px-8 py-5">
+                <td class="px-6 py-4">
                   ${row.proxyTeacher ? `
                     <div class="flex flex-col">
                       <span class="font-medium text-blue-700 print:text-black">${row.proxyTeacher.name}</span>
-                      <span class="text-xs text-blue-400/80 mt-0.5 print:text-gray-500 truncate max-w-[200px]">${row.proxyTeacher.subject}</span>
+                      <span class="text-xs text-blue-500 mt-0.5 print:text-slate-500 truncate max-w-[180px]">${row.proxyTeacher.subject}</span>
                     </div>
-                  ` : `<span class="text-red-400 font-medium italic print:text-black">Unassigned</span>`}
+                  ` : `<span class="text-red-500 font-medium italic print:text-black">Unassigned</span>`}
                 </td>
-                <td class="px-8 py-5 text-right">
+                <td class="px-6 py-4 text-right whitespace-nowrap">
                   ${row.status === 'Covered' ? `
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100/80 text-green-700 border border-green-200/50 print:bg-transparent print:text-black print:px-0 print:border-none">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-700 print:bg-transparent print:text-black print:px-0 print:border-none">
                       <i data-lucide="check" class="w-3.5 h-3.5 mr-1.5 print:hidden"></i> Covered
                     </span>
                   ` : `
-                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-50 text-red-600 border border-red-100 print:bg-transparent print:text-black print:px-0 print:border-gray-400 print:rounded-none">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-50 text-red-700 border border-red-100 print:bg-transparent print:text-black print:px-0 print:border-slate-400 print:rounded-none">
                       Pending
                     </span>
                   `}
