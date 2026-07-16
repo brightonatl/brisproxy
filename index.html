@@ -33,16 +33,16 @@
     .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-[#F0F4F8] text-slate-800 h-screen flex flex-col font-['Roboto'] selection:bg-blue-200">
+<body class="bg-[#F0F4F8] text-slate-800 font-['Roboto'] selection:bg-blue-200 antialiased">
 
-  <!-- Main Bento Grid Wrapper -->
-  <div class="flex-1 flex flex-col lg:flex-row gap-4 p-4 lg:p-6 lg:overflow-hidden max-w-[1600px] mx-auto w-full h-full overflow-y-auto">
+  <!-- Main Bento Grid Wrapper: Let body scroll on mobile, lock to screen height on desktop -->
+  <div class="flex flex-col lg:flex-row gap-5 lg:gap-6 p-4 lg:p-6 lg:h-screen max-w-[1600px] mx-auto w-full lg:overflow-hidden">
     
     <!-- Left Column (Bento Cards) -->
-    <div class="w-full lg:w-[400px] flex flex-col gap-4 shrink-0 lg:overflow-hidden h-fit lg:h-full print:hidden">
+    <div class="w-full lg:w-[400px] xl:w-[420px] flex flex-col gap-5 lg:gap-6 shrink-0 lg:overflow-hidden h-auto lg:h-full print:hidden">
       
       <!-- Header Card -->
-      <div class="bg-white rounded-[28px] p-5 flex items-center justify-between shrink-0 shadow-sm border border-slate-100">
+      <div class="bg-white rounded-[28px] p-5 lg:p-6 flex items-center justify-between shrink-0 shadow-sm border border-slate-100">
         <div class="flex items-center space-x-3">
           <div class="bg-blue-600 p-2.5 rounded-[16px] shadow-sm">
             <i data-lucide="calendar-days" class="w-5 h-5 text-white"></i>
@@ -55,21 +55,21 @@
       </div>
 
       <!-- Day Selector Card -->
-      <div class="bg-white rounded-[28px] p-6 shrink-0 shadow-sm border border-slate-100">
+      <div class="bg-white rounded-[28px] p-5 lg:p-6 shrink-0 shadow-sm border border-slate-100">
         <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider mb-4 pl-1">Working Day</h2>
-        <div id="day-selector-container" class="flex overflow-x-auto hide-scrollbar gap-2 pb-1"></div>
+        <div id="day-selector-container" class="flex overflow-x-auto hide-scrollbar gap-2 pb-1 -mx-2 px-2 sm:mx-0 sm:px-0"></div>
       </div>
 
-      <!-- Absences Card -->
-      <div class="bg-white rounded-[28px] p-6 flex flex-col flex-1 min-h-[450px] lg:overflow-hidden shadow-sm border border-slate-100">
+      <!-- Absences Card (Fixed height on mobile to prevent burying the main content) -->
+      <div class="bg-white rounded-[28px] p-5 lg:p-6 flex flex-col h-[420px] lg:h-auto lg:flex-1 lg:overflow-hidden shadow-sm border border-slate-100 relative">
         <div class="flex items-center justify-between mb-5 pl-1 shrink-0">
           <h2 class="text-sm font-bold text-slate-500 uppercase tracking-wider">Mark Absences</h2>
-          <span id="absent-badge" class="bg-red-100 text-red-700 py-1 px-3 rounded-full text-xs font-bold">0 Absent</span>
+          <span id="absent-badge" class="bg-blue-50 text-blue-700 border border-blue-100 py-1 px-3 rounded-full text-xs font-bold">0 Absent</span>
         </div>
         
         <!-- Search Bar -->
-        <div class="relative mb-5 shrink-0">
-          <input type="text" id="teacher-search" placeholder="Search teachers..." oninput="handleSearch(event)" class="w-full bg-slate-100 border-transparent text-slate-700 text-base rounded-full focus:ring-2 focus:ring-blue-500 focus:bg-white block px-5 py-3.5 transition-all placeholder-slate-400 outline-none">
+        <div class="relative mb-4 shrink-0">
+          <input type="text" id="teacher-search" placeholder="Search teachers..." oninput="handleSearch(event)" class="w-full bg-slate-50 border border-slate-200 text-slate-800 text-sm font-medium rounded-[20px] focus:ring-2 focus:ring-blue-500 focus:bg-white block px-5 py-3.5 transition-all placeholder-slate-400 outline-none shadow-sm">
           <i data-lucide="search" class="absolute right-4 top-3.5 w-5 h-5 text-slate-400"></i>
         </div>
         
@@ -79,7 +79,7 @@
     </div>
 
     <!-- Right Column (Main Content Card) -->
-    <main class="flex-1 flex flex-col bg-white rounded-[28px] lg:overflow-hidden shadow-sm border border-slate-100 h-full min-h-[600px] print:shadow-none print:border-none print:rounded-none">
+    <main class="flex-1 flex flex-col bg-white rounded-[28px] lg:overflow-hidden shadow-sm border border-slate-100 h-auto min-h-[600px] lg:h-full lg:min-h-0 print:shadow-none print:border-none print:rounded-none">
       
       <!-- Tabs Header -->
       <div class="px-6 md:px-8 pt-6 border-b border-slate-100 print:hidden shrink-0 overflow-x-auto hide-scrollbar">
@@ -430,13 +430,13 @@
           const initials = teacher.name.split(' ').map(n => n[0]).join('').substring(0, 2);
           
           return `
-            <button onclick="toggleAbsent('${teacher.id}')" class="w-full flex items-center justify-between p-3 rounded-[20px] transition-all duration-200 text-left ${
+            <button onclick="toggleAbsent('${teacher.id}')" class="w-full flex items-center justify-between p-3.5 rounded-[20px] transition-all duration-200 text-left border ${
               isAbsent 
-              ? 'bg-red-50 hover:bg-red-100' 
-              : 'bg-transparent hover:bg-slate-100'
+              ? 'bg-red-50 border-red-200 shadow-sm' 
+              : 'bg-white border-transparent hover:border-slate-200 hover:bg-slate-50 hover:shadow-sm'
             }">
               <div class="flex items-center space-x-4">
-                <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${isAbsent ? 'bg-red-200 text-red-700' : 'bg-slate-200 text-slate-600'}">
+                <div class="w-10 h-10 rounded-full flex items-center justify-center text-sm font-bold shrink-0 ${isAbsent ? 'bg-red-200 text-red-700' : 'bg-slate-100 text-slate-600'}">
                   ${initials}
                 </div>
                 <div class="flex flex-col overflow-hidden">
@@ -464,16 +464,16 @@
       // Material underline tabs
       const tabsContainer = document.getElementById('tabs-container');
       tabsContainer.innerHTML = `
-        <button onclick="setActiveTab('assign')" class="pb-4 px-2 flex items-center space-x-2 border-b-2 font-medium transition-colors text-sm ${
-          state.activeTab === 'assign' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-t-lg'
+        <button onclick="setActiveTab('assign')" class="pb-4 px-2 sm:px-4 flex items-center space-x-2 border-b-2 font-medium transition-colors text-sm sm:text-base ${
+          state.activeTab === 'assign' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-t-xl'
         }">
-          <i data-lucide="layout-dashboard" class="w-4 h-4 ${state.activeTab === 'assign' ? 'text-blue-600' : ''}"></i>
+          <i data-lucide="layout-dashboard" class="w-4 h-4 sm:w-5 sm:h-5 ${state.activeTab === 'assign' ? 'text-blue-600' : ''}"></i>
           <span>Assign Proxies</span>
         </button>
-        <button onclick="setActiveTab('summary')" class="pb-4 px-2 flex items-center space-x-2 border-b-2 font-medium transition-colors text-sm relative ${
-          state.activeTab === 'summary' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-t-lg'
+        <button onclick="setActiveTab('summary')" class="pb-4 px-2 sm:px-4 flex items-center space-x-2 border-b-2 font-medium transition-colors text-sm sm:text-base relative ${
+          state.activeTab === 'summary' ? 'border-blue-600 text-blue-700' : 'border-transparent text-slate-500 hover:text-slate-800 hover:bg-slate-50 rounded-t-xl'
         }">
-          <i data-lucide="clipboard-list" class="w-4 h-4 ${state.activeTab === 'summary' ? 'text-blue-600' : ''}"></i>
+          <i data-lucide="clipboard-list" class="w-4 h-4 sm:w-5 sm:h-5 ${state.activeTab === 'summary' ? 'text-blue-600' : ''}"></i>
           <span>Daily Summary</span>
           ${pendingCount > 0 ? `
             <span class="flex h-2 w-2 relative ml-1 -mt-2">
@@ -561,20 +561,20 @@
               const availableProxies = isFree ? [] : getAvailableProxies(state.selectedDay, index, absentId);
 
               html += `
-                <div class="px-4 py-3 flex flex-col sm:flex-row sm:items-center justify-between rounded-[16px] hover:bg-slate-50 transition-colors gap-3 sm:gap-0">
-                  <div class="flex items-center space-x-4 w-full sm:w-1/3">
-                    <span class="flex items-center justify-center w-8 h-8 rounded-full bg-slate-100 text-slate-600 font-bold text-xs shrink-0">P${index + 1}</span>
+                <div class="px-4 py-3.5 sm:py-3 flex flex-col sm:flex-row sm:items-center justify-between rounded-[20px] hover:bg-slate-50 transition-all duration-200 gap-3 sm:gap-0 border border-transparent hover:border-slate-100">
+                  <div class="flex items-center space-x-3 sm:space-x-4 w-full sm:w-1/3">
+                    <span class="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 rounded-[12px] bg-slate-100 text-slate-600 font-bold text-sm shrink-0">P${index + 1}</span>
                     ${isFree 
                       ? `<span class="text-sm text-slate-400 italic flex items-center"><i data-lucide="minus" class="w-4 h-4 mr-2"></i> Free</span>` 
-                      : `<span class="font-medium text-slate-800 bg-blue-50 px-3 py-1.5 rounded-lg text-sm truncate w-full sm:w-auto" title="${className}">${className}</span>`
+                      : `<span class="font-bold text-slate-800 bg-blue-50/50 border border-blue-100/50 px-3.5 py-1.5 rounded-xl text-sm truncate">Class ${className}</span>`
                     }
                   </div>
                   
                   <div class="flex-1 w-full sm:w-auto flex justify-start sm:justify-end">
                     ${isFree ? `<span class="text-sm text-slate-400 hidden sm:block px-3">No proxy needed</span>` : `
-                      <div class="relative w-full sm:max-w-[240px]">
-                        <select onchange="assignProxy(this, '${absentId}', ${index})" class="w-full appearance-none bg-slate-100 border-none text-slate-700 text-sm font-medium rounded-full focus:ring-2 focus:ring-blue-500 focus:bg-white block px-4 py-3 pr-10 cursor-pointer outline-none transition-all hover:bg-slate-200">
-                          <option value="">Select proxy...</option>
+                      <div class="relative w-full sm:max-w-[280px]">
+                        <select onchange="assignProxy(this, '${absentId}', ${index})" class="w-full appearance-none bg-white border border-slate-200 text-slate-700 text-sm font-medium rounded-[16px] focus:ring-2 focus:ring-blue-500 focus:border-blue-500 block px-4 py-3 sm:py-3.5 pr-10 cursor-pointer outline-none transition-all shadow-sm hover:bg-slate-50">
+                          <option value="" class="text-slate-400">Select proxy teacher...</option>
                           ${availableProxies.map(proxy => `
                             <option value="${proxy.id}" ${proxy.id === currentProxyId ? 'selected' : ''}>
                               ${proxy.name}
@@ -584,15 +584,15 @@
                             <option value="${currentProxyId}" selected>${TEACHERS.find(t=>t.id===currentProxyId).name} (Selected)</option>
                           ` : ''}
                         </select>
-                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-500">
-                          <i data-lucide="chevron-down" class="w-4 h-4"></i>
+                        <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-slate-400">
+                          <i data-lucide="chevron-down" class="w-5 h-5"></i>
                         </div>
                       </div>
                     `}
                   </div>
 
-                  <div class="hidden sm:flex w-8 justify-end">
-                    ${currentProxyId && !isFree ? `<i data-lucide="check-circle-2" class="w-5 h-5 text-green-600"></i>` : ''}
+                  <div class="hidden sm:flex w-10 justify-end shrink-0">
+                    ${currentProxyId && !isFree ? `<i data-lucide="check-circle-2" class="w-6 h-6 text-green-500"></i>` : ''}
                   </div>
                 </div>
               `;
